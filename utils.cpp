@@ -1,9 +1,13 @@
 #include "utils.h"
 using namespace std;
 using namespace utils;
+
+extern std::map<std::string, GLuint*> textures;
+
 Model utils::loadObj(const char *fname){
-    std::vector<Vertex>  vertices;
+    std::vector<Vertex> vertices;
     std::vector<Face> faces;
+    std::vector<Vec2f> texCoords;
     int texCoordsRead=0;
 	FILE *fp;
 	int read;
@@ -18,10 +22,11 @@ Model utils::loadObj(const char *fname){
 	}
 	while(!(feof(fp))){
 		read=fscanf(fp,"%s",ch);
+        std::cout << "line is :'" <<ch << "'"<< std::endl;
 		if (read == EOF)
 			break; // EOF
 		if(strcmp(ch,"v")==0){
-			read=fscanf(fp,"%f %f %f",&x,&y,&z);
+			read=fscanf(fp,"%f %f %f\n",&x,&y,&z);
 			if(read==3){
 				// glVertex3f(x,y,z);
 				vertices.push_back(Vertex(x,y,z));
@@ -31,9 +36,13 @@ Model utils::loadObj(const char *fname){
 			read=fscanf(fp,"%f %f",&x,&y);
 			if(read==2){
 				// glTexCoord2f(x,y);
-				printf("tex coord %f, %f",x,y);
-				vertices[texCoordsRead].tx=x;
-				vertices[texCoordsRead].ty=y;
+				printf("tex coord %f, %f\n",x,y);
+                // if (texCoordsRead < vertices.size()){
+                    // vertices[texCoordsRead].tx=x;
+                    // vertices[texCoordsRead].ty=y;
+                // }
+                texCoords.push_back(Vec2f(x,y));
+
 				texCoordsRead++;
 			}
 		}else if (read== 1 && strcmp(ch,"f")==0){
@@ -42,7 +51,7 @@ Model utils::loadObj(const char *fname){
 			int i[3],t[3],n[3];
 			fpos_t undo_pos;
 			fgetpos(fp, &undo_pos);
-			read = fscanf(fp, "%d/ %d/ %d/", &i[0],&i[1],&i[2]);
+			read = fscanf(fp, "%d/ %d/ %d/\n", &i[0],&i[1],&i[2]);
 			// read = fscanf(fp, "%d/ %d/ %d/", &i[0],&i[1],&i[2]);
 			//index
 			if (read ==3){
@@ -59,7 +68,7 @@ Model utils::loadObj(const char *fname){
 				//undo
 				fsetpos(fp, &undo_pos);
 				fgetpos(fp, &undo_pos);
-				read = fscanf(fp, "%d/%d %d/%d %d/%d", &i[0],&t[0],  &i[1],&t[1],  &i[2],&t[2]);
+				read = fscanf(fp, "%d/%d %d/%d %d/%d\n", &i[0],&t[0],  &i[1],&t[1],  &i[2],&t[2]);
 				
 				//index,texture
 				if( read == 6){
@@ -70,7 +79,11 @@ Model utils::loadObj(const char *fname){
 					Log( t[0]);
 					Log( t[1]);
 					Log( t[2]);
-					faces.push_back(Face(i[0]-1,i[1]-1,i[2]-1));
+                    Face face(i[0]-1,i[1]-1,i[2]-1);
+                    face.texIndices[0] = t[0]-1;
+                    face.texIndices[1] = t[1]-1;
+                    face.texIndices[2] = t[2]-1;
+					faces.push_back(face);
 				}
 				else{
 					Log(read);
@@ -89,9 +102,14 @@ Model utils::loadObj(const char *fname){
 			}
 		}
 	}
-	fclose(fp);
-
+	//fclose(fp);
+    if (fclose(fp) == EOF) {
+        perror("out.dat");
+        std::cout <<" error at closing file "<<fname<<std::endl;
+        // success = 0;
+    }
     Model model(vertices,faces);
+    model.texCoords = texCoords;
     return model;
 }
 
@@ -206,7 +224,7 @@ unsigned short utils::getshort(FILE* fp){
 
 
 // Load Bitmaps And Convert To Textures
-GLuint utils::LoadGLTexture(char *fileName) {	
+GLuint* utils::LoadGLTexture(char *fileName, char* name) {	
 	// Load Texture
 	Image *image;
 
@@ -222,12 +240,34 @@ GLuint utils::LoadGLTexture(char *fileName) {
 	if (!ImageLoad(fileName, image)){
 		exit(1);
 	}        
-    GLuint textureId;
+    GLuint *textureId;
+    textureId = new GLuint;
 	// Create Texture Name and Bind it as current
-	glGenTextures(1, &textureId);
-	glBindTexture(GL_TEXTURE_2D, textureId);   // 2d texture (x and y size)
+	glGenTextures(1, textureId);
+	//glBindTexture(GL_TEXTURE_2D, textureId);   // 2d texture (x and y size)
 
-	//Set Texture Parameters
+    std::string textureName;
+    if (textureId == NULL){
+        std::cout << "Null textureId"<< std::endl;
+        exit(1);
+    }else{
+        std::cout << *textureId << std::endl;
+        std::cout << textureId << std::endl;
+        // exit(1);
+    }
+    if(name == NULL){
+        textureName = utils::random_string(10);
+        textures.insert(std::make_pair(textureName, textureId));
+    }else{
+        textures.insert(std::make_pair(std::string(name), textureId)); 
+    }
+    std::cout << "textureId = " << *textureId<<std::endl;
+    std::cout  << textureId<<std::endl;
+    glBindTexture(GL_TEXTURE_2D, *textureId);
+    // glActiveTexture(GL_TEXTURE0+textures.size());
+    glActiveTexture(GL_TEXTURE0);
+	
+    //Set Texture Parameters
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR); // scale linearly when image bigger than texture
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR); // scale linearly when image smaller than texture
 
@@ -246,7 +286,7 @@ GLuint utils::LoadGLTexture(char *fileName) {
 				 GL_UNSIGNED_BYTE,  // color componente types
 				 image->data		// image data itself
 				 );
-
+    glBindTexture(GL_TEXTURE_2D,0);
     return textureId;
 	////Once you load a texture is the original data still needed?
 	//for (int i = 0; i < image1->sizeX; i++)
@@ -256,4 +296,76 @@ GLuint utils::LoadGLTexture(char *fileName) {
 	////If not, then should you deallocate it?
 	//delete []image1->data;
 	//delete image1;
-};
+}
+
+char_array utils::charset(){
+    //Change this to suit
+    return char_array( 
+    {'0','1','2','3','4',
+    '5','6','7','8','9',
+    'A','B','C','D','E','F',
+    'G','H','I','J','K',
+    'L','M','N','O','P',
+    'Q','R','S','T','U',
+    'V','W','X','Y','Z',
+    'a','b','c','d','e','f',
+    'g','h','i','j','k',
+    'l','m','n','o','p',
+    'q','r','s','t','u',
+    'v','w','x','y','z'
+    });
+} 
+
+// given a function that generates a random character,
+// return a string of the requested length
+std::string utils::random_string( size_t length )
+{
+ //0) create the character set.
+    //   yes, you can use an array here, 
+    //   but a function is cleaner and more flexible
+    const auto ch_set = utils::charset();
+
+    //1) create a non-deterministic random number generator      
+    std::default_random_engine rng(std::random_device{}());
+
+    //2) create a random number "shaper" that will give
+    //   us uniformly distributed indices into the character set
+    std::uniform_int_distribution<> dist(0, ch_set.size()-1);
+
+    //3) create a function that ties them together, to get:
+    //   a non-deterministic uniform distribution from the 
+    //   character set of your choice.
+    std::function<char(void)> randchar = [ ch_set,&dist,&rng ](){
+        return ch_set[ dist(rng) ];
+    };
+
+    //4) set the length of the string you want and profit!        
+  
+    //std::cout<<random_string(length,randchar)<<std::endl;
+
+    std::string str(length,0);
+    std::generate_n( str.begin(), length, randchar );
+    return str;
+}
+
+GLuint* utils::getTextureId(std::string str){
+
+    for(map<std::string,GLuint*>::iterator it = textures.begin(); it != textures.end(); ++it) {
+        if (it->first == str){
+            return it->second;
+        }
+    }
+    return 0;
+}
+
+
+int utils::getTexturePos(std::string str){
+    int i = 0;
+    for(map<std::string,GLuint*>::iterator it = textures.begin(); it != textures.end(); ++it) {
+        if (it->first == str){
+            return i;
+        }
+        i++;
+    }
+    return -1;
+}

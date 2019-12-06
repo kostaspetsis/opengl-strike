@@ -1,8 +1,9 @@
 SRC=game.cpp\
     utils.cpp\
-    Model.cpp
+    Model.cpp\
+    Globals.cpp
 
 make:$(SRC)
-	g++ -std=c++17 $(SRC) -o game -lGL -lGLU -lglut
+	g++ -pthread -Wall -std=c++17 -g $(SRC) -lglut -lGL -lGLU -o game 
 clean:
 	rm game

@@ -5,11 +5,12 @@ class Face{
 public:
 	Face(){}
 	Face(int id1, int id2, int id3){
-		indices[0]=id1;indices[1]=id2;indices[2]=id3;
+		vertIndices[0]=id1;vertIndices[1]=id2;vertIndices[2]=id3;
 	}
 	void serialize(){
-		std::cout << indices[0] << ", " << indices[1] << ", " << indices[2]<<std::endl;
+		std::cout << vertIndices[0] << ", " << vertIndices[1] << ", " << vertIndices[2]<<std::endl;
 	}
-	int indices[3];
+	int vertIndices[3];
+	int texIndices[3];
 };
 #endif

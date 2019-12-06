@@ -8,6 +8,9 @@
 #include "Vertex.h"
 #include "Face.h"
 #include "GraphicsEngine.h"
+#include "Vec2f.h"
+
+
 
 class Model{
 public:
@@ -20,6 +23,13 @@ public:
 	// }
 	std::vector<Vertex> vertices;
 	std::vector<Face> faces;
+	std::vector<Vec2f> texCoords;
+	// std::vector<GLuint> textureIds;
+	GLuint *textureId;
+	std::string textureLabel;
+	bool bUseTexture;
+	void useTexture(GLuint *id, bool use=true);
+	void useTexture(std::string textureName);
 	void render();
 	void serialize();
 };	

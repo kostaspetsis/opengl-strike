@@ -7,19 +7,24 @@
 #include <string.h>
 #include <vector>
 #include <variant>
+#include <stdlib.h>
 
 #include "Vertex.h"
 #include "Face.h"
 #include "utils.h"
 #include "Scene.h"
+#include "GraphicsEngine.h"
 
 //globals
 float elephantrot;
 int w=-100;
 int a=0;
 Model model;
+Model floorModel;
 Scene scene;
 GLuint textureId;
+std::vector<GLuint*> textureIds;
+extern std::map<std::string, GLuint*> textures;
 
 void keyboard(unsigned char key, int x, int y) ;
 
@@ -52,8 +57,10 @@ void drawCar(){
 void InitGL(int Width, int Height)	        // We call this right after our OpenGL window is created.
 {
 	GLfloat aspect;
-	textureId = utils::LoadGLTexture("data/Abstract3_512.bmp");						// Load The Texture(s) 
-	glEnable(GL_TEXTURE_2D);				// Enable Texture Mapping
+	textureIds.push_back(utils::LoadGLTexture("data/Abstract3_512.bmp", "Abstract")); 
+	textureIds.push_back(utils::LoadGLTexture("data/floor_checkerboard.bmp", "floor")); 
+	textureIds.push_back(utils::LoadGLTexture("data/Crate.bmp", "crate")); 
+					// Enable Texture Mapping
 	glClearColor(0.0f, 0.0f, 1.0f, 0.0f);	// Clear The Background Color To Blue 
 	glClearDepth(1.0);						// Enables Clearing Of The Depth Buffer
 	glDepthFunc(GL_LESS);					// The Type Of Depth Test To Do
@@ -88,18 +95,31 @@ int main(int argc,char **argv){
 	glutInitWindowPosition(20,20);
 	glutCreateWindow("ObjLoader");
 	glutReshapeFunc(reshape);
-	glutDisplayFunc(display);
-	glutIdleFunc(display);
+	
 		/* Register the function called when the keyboard is pressed. */
 	glutKeyboardFunc(&keyboard);
+	/* Initialize our window. */
+	InitGL(640, 480);
 	
 	model = utils::loadObj("data/porsche.obj");//replace porsche.obj with radar.obj or any other .obj to display it
 	model.serialize();
-	scene.Add(&model);
+	model.useTexture("Abstract");
+	// scene.Add(&model);
 
-	/* Initialize our window. */
-	InitGL(640, 480);
-
+	
+	floorModel = utils::loadObj("data/Map_Dust2.obj");
+	// floorModel = utils::loadObj("data/cube.obj");
+	floorModel.serialize();
+	floorModel.useTexture("floor");
+	// floor.useTexture(-1,false);
+	scene.Add(&floorModel);
+	
+	Model cube = utils::loadObj("data/cube.obj");
+	cube.useTexture("crate");
+	scene.Add(&cube);
+	
+	glutDisplayFunc(display);
+	glutIdleFunc(display);
 	glutMainLoop();
 	return 0;
 }
