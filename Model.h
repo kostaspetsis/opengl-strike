@@ -9,7 +9,7 @@
 #include "Face.h"
 #include "GraphicsEngine.h"
 #include "Vec2f.h"
-
+#include "Vec3.h"
 
 
 class Model{
@@ -27,6 +27,8 @@ public:
 	// std::vector<GLuint> textureIds;
 	GLuint *textureId;
 	std::string textureLabel;
+	Vec3 pos,rot,scale;
+	float angle;
 	bool bUseTexture;
 	void useTexture(GLuint *id, bool use=true);
 	void useTexture(std::string textureName);

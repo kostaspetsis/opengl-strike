@@ -5,6 +5,9 @@
 #include <iostream>
 #include "Model.h"
 #include "utils.h"
+#include "parsers/tinyXML/tinyxml.h"
+#include "parsers/tinyXML/tinystr.h"
+#include "utils.h"
 
 class Scene{
 public:
@@ -18,6 +21,9 @@ public:
 			model->render();
 		}
 	}
+
+	void LoadScene(std::string fileName);
+
 	std::vector<Model*> models;
 };
 

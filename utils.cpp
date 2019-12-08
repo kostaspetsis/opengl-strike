@@ -110,6 +110,7 @@ Model utils::loadObj(const char *fname){
     }
     Model model(vertices,faces);
     model.texCoords = texCoords;
+	model.serialize();
     return model;
 }
 

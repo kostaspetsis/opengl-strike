@@ -40,7 +40,10 @@ namespace utils{
 	unsigned short getshort(FILE* fp);
 	// Load Bitmaps And Convert To Textures
 	GLuint* LoadGLTexture(char *fileName, char* name=NULL);
-	
+	// GLuint* LoadGLTexture(std::string fileName, std::string name=NULL){
+	// 	return LoadGLTexture(fileName.c_str(), name.c_str());
+	// }
+
 	// given a function that generates a random character,
 	// return a string of the requested length
 	std::string random_string( size_t length );

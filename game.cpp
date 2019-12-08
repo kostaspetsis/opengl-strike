@@ -23,7 +23,7 @@ Model model;
 Model floorModel;
 Scene scene;
 GLuint textureId;
-std::vector<GLuint*> textureIds;
+extern std::vector<GLuint*> textureIds;
 extern std::map<std::string, GLuint*> textures;
 
 void keyboard(unsigned char key, int x, int y) ;
@@ -57,9 +57,9 @@ void drawCar(){
 void InitGL(int Width, int Height)	        // We call this right after our OpenGL window is created.
 {
 	GLfloat aspect;
-	textureIds.push_back(utils::LoadGLTexture("data/Abstract3_512.bmp", "Abstract")); 
-	textureIds.push_back(utils::LoadGLTexture("data/floor_checkerboard.bmp", "floor")); 
-	textureIds.push_back(utils::LoadGLTexture("data/Crate.bmp", "crate")); 
+	// textureIds.push_back(utils::LoadGLTexture("data/Abstract3_512.bmp", "Abstract")); 
+	// textureIds.push_back(utils::LoadGLTexture("data/floor_checkerboard.bmp", "floor")); 
+	// textureIds.push_back(utils::LoadGLTexture("data/Crate.bmp", "crate")); 
 					// Enable Texture Mapping
 	glClearColor(0.0f, 0.0f, 1.0f, 0.0f);	// Clear The Background Color To Blue 
 	glClearDepth(1.0);						// Enables Clearing Of The Depth Buffer
@@ -101,23 +101,25 @@ int main(int argc,char **argv){
 	/* Initialize our window. */
 	InitGL(640, 480);
 	
-	model = utils::loadObj("data/porsche.obj");//replace porsche.obj with radar.obj or any other .obj to display it
-	model.serialize();
-	model.useTexture("Abstract");
-	// scene.Add(&model);
+	// model = utils::loadObj("data/porsche.obj");//replace porsche.obj with radar.obj or any other .obj to display it
+	// model.serialize();
+	// model.useTexture("Abstract");
+	// // scene.Add(&model);
 
 	
-	floorModel = utils::loadObj("data/Map_Dust2.obj");
-	// floorModel = utils::loadObj("data/cube.obj");
-	floorModel.serialize();
-	floorModel.useTexture("floor");
-	// floor.useTexture(-1,false);
-	scene.Add(&floorModel);
+	// floorModel = utils::loadObj("data/Map_Dust2.obj");
+	// // floorModel = utils::loadObj("data/cube.obj");
+	// floorModel.serialize();
+	// floorModel.useTexture("floor");
+	// // floor.useTexture(-1,false);
+	// scene.Add(&floorModel);
 	
-	Model cube = utils::loadObj("data/cube.obj");
-	cube.useTexture("crate");
-	scene.Add(&cube);
-	
+	// Model cube = utils::loadObj("data/cube.obj");
+	// cube.useTexture("crate");
+	// scene.Add(&cube);
+	scene.LoadScene("data/Scene.xml");
+
+
 	glutDisplayFunc(display);
 	glutIdleFunc(display);
 	glutMainLoop();
