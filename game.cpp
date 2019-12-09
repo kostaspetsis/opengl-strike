@@ -25,7 +25,8 @@ Scene scene;
 GLuint textureId;
 extern std::vector<GLuint*> textureIds;
 extern std::map<std::string, GLuint*> textures;
-
+extern float varx,vary,varz;
+extern float timeline[5];
 void keyboard(unsigned char key, int x, int y) ;
 
 void reshape(int w,int h){    
@@ -100,7 +101,7 @@ int main(int argc,char **argv){
 	glutKeyboardFunc(&keyboard);
 	/* Initialize our window. */
 	InitGL(640, 480);
-	
+	varx=vary=varz=0.f;
 	// model = utils::loadObj("data/porsche.obj");//replace porsche.obj with radar.obj or any other .obj to display it
 	// model.serialize();
 	// model.useTexture("Abstract");
@@ -117,6 +118,11 @@ int main(int argc,char **argv){
 	// Model cube = utils::loadObj("data/cube.obj");
 	// cube.useTexture("crate");
 	// scene.Add(&cube);
+	timeline[0]=0.f;
+	timeline[1]=2.f;
+	timeline[2]=-2.f;
+	timeline[3]=3.f;
+	timeline[4]=-3.f;
 	scene.LoadScene("data/Scene.xml");
 
 
@@ -140,6 +146,15 @@ void keyboard(unsigned char key, int x, int y) {
 		break;
 	case 's':
 		w--;
+		break;
+	case 'x':
+		varx++;
+		break;
+	case 'y':
+		vary++;
+		break;
+	case 'z':
+		varz++;
 		break;
 	case 27:
 		// shut down our window 

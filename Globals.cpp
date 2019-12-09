@@ -9,4 +9,6 @@
 
 std::vector<GLuint*> textureIds;
 std::map<std::string, GLuint*> textures;
+float varx,vary,varz;
+float timeline[5];
 // #endif
