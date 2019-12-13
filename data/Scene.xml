@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
-    <Model path="data/cube.obj">
+    <Model path="data/Map_Dust2.obj">
         <Transform>
             <Position>
                 <Vec3 x="10" y="0" z="0">
@@ -11,7 +11,7 @@
                 </Vec3>
             </Rotation>
             <Scale>
-                <Vec3 x="10" y="1" z="1">
+                <Vec3 x="1" y="1" z="1">
                 </Vec3>
             </Scale>
         </Transform>

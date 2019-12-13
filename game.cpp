@@ -19,6 +19,7 @@
 float elephantrot;
 int w=-100;
 int a=0;
+int e=0;
 Model model;
 Model floorModel;
 Scene scene;
@@ -41,7 +42,7 @@ void reshape(int w,int h){
 void drawCar(){
  	glPushMatrix();
 		// glTranslatef(0,-40.00,-105);
-		glTranslatef(a,0,w);
+		glTranslatef(a,e,w);
 		//glColor3f(1.0,0.23,0.27);
 		// glScalef(0.1,0.1,0.1);
 		glRotatef(elephantrot,0,1,0);
@@ -155,6 +156,12 @@ void keyboard(unsigned char key, int x, int y) {
 		break;
 	case 'z':
 		varz++;
+		break;
+	case 'e':
+		e++;
+		break;
+	case 'q':
+		e--;
 		break;
 	case 27:
 		// shut down our window 

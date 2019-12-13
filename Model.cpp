@@ -44,11 +44,11 @@ void Model::render(){
 			glVertex3f(vertices[face.vertIndices[2]].x,vertices[face.vertIndices[2]].y, vertices[face.vertIndices[2]].z);
 		}
 	glEnd();
-	vertices[1].x = varx;
+	/*vertices[1].x = varx;
 	vertices[1].y = vary;
 	vertices[1].z = varz;
 	vertices[0].x=timeline[(i++)%5];
-	std::this_thread::sleep_for(std::chrono::milliseconds(500));
+	std::this_thread::sleep_for(std::chrono::milliseconds(500));*/
 }
 
 void Model::serialize(){
